@@ -1,0 +1,53 @@
+Fri Sep  4 03:01:57 UTC 2026
+neeshant
+neeshant
+Filesystem      Size  Used Avail Use% Mounted on
+none            3.8G     0  3.8G   0% /usr/lib/modules/6.18.33.1-microsoft-standard-WSL2
+none            3.8G  4.0K  3.8G   1% /mnt/wsl
+drivers         265G  198G   67G  75% /usr/lib/wsl/drivers
+/dev/sdd       1007G  2.1G  954G   1% /
+none            3.8G   56K  3.8G   1% /mnt/wslg
+none            3.8G     0  3.8G   0% /usr/lib/wsl/lib
+rootfs          3.8G  2.8M  3.8G   1% /init
+none            3.8G  540K  3.8G   1% /run
+none            3.8G     0  3.8G   0% /run/lock
+none            3.8G     0  3.8G   0% /run/shm
+none            3.8G  100K  3.8G   1% /mnt/wslg/versions.txt
+none            3.8G  100K  3.8G   1% /mnt/wslg/doc
+C:\             265G  198G   67G  75% /mnt/c
+D:\             212G   73G  139G  35% /mnt/d
+tmpfs           3.8G     0  3.8G   0% /tmp
+none            1.0M     0  1.0M   0% /run/credentials/systemd-resolved.service
+none            1.0M     0  1.0M   0% /run/credentials/getty@tty1.service
+tmpfs           764M   12K  764M   1% /run/user/1000
+none            1.0M     0  1.0M   0% /run/credentials/systemd-journald.service
+USER         PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND
+root           1  0.0  0.2  24576 15860 ?        Ss   01:36   0:01 /sbin/init
+root           2  0.0  0.0   3180  2208 hvc0     Sl+  01:36   0:00 /init
+root           7  0.0  0.0   3180  2044 hvc0     Sl+  01:36   0:00 plan9 --control-socket 7 --log-level 4 --server-fd 8 --pipe-fd 10 --log-truncate
+systemd+      70  0.0  0.1  22416 14440 ?        Ss   01:36   0:00 /usr/lib/systemd/systemd-resolved
+root          92  0.0  0.1  35384 12356 ?        Ss   01:36   0:02 /usr/lib/systemd/systemd-udevd
+root         158  0.0  0.0   2888  1948 ?        Ss   01:36   0:00 /bin/sh /usr/lib/systemd/scripts/chronyd-starter.sh -n -F 1
+root         160  0.0  0.0   4472  3060 ?        Ss   01:36   0:00 /usr/sbin/cron -f -P
+message+     161  0.0  0.0   9036  5712 ?        Ss   01:36   0:00 @dbus-daemon --system --address=systemd: --nofork --nopidfile --systemd-activation --syslog-only
+root         179  0.0  0.3  44096 29696 ?        Ss   01:36   0:00 /usr/bin/python3 /usr/bin/networkd-dispatcher --run-startup-triggers
+root         183  0.0  0.1  18524  9416 ?        Ss   01:36   0:00 /usr/lib/systemd/systemd-logind
+syslog       213  0.0  0.0 220548  5812 ?        Ssl  01:36   0:00 /usr/sbin/rsyslogd -n -iNONE
+root         226  0.0  0.0   5492  2732 tty1     Ss+  01:36   0:00 /usr/sbin/agetty --noreset --noclear --issue-file=/etc/issue:/etc/issue.d:/run/issue.d:/usr/lib/issue.d - linux
+root         228  0.0  0.4 123464 32764 ?        Ssl  01:36   0:00 /usr/bin/python3 /usr/share/unattended-upgrades/unattended-upgrade-shutdown --wait-for-signal
+_chrony      250  0.0  0.0  20424  7752 ?        S    01:36   0:00 /usr/sbin/chronyd -n -F 1 -x
+_chrony      262  0.0  0.0  12096  2464 ?        S    01:36   0:00 /usr/sbin/chronyd -n -F 1 -x
+root         336  0.0  0.0   3196  1116 ?        Ss   01:36   0:00 /init
+root         337  0.0  0.0   3196  1252 ?        S    01:36   0:00 /init
+neeshant     338  0.0  0.0   6268  5536 pts/0    Ss   01:36   0:00 -bash
+root         339  0.0  0.0   8648  5508 ?        Ss   01:36   0:00 login -- neeshant
+neeshant     381  0.0  0.1  22688 13560 ?        Ss   01:36   0:00 /usr/lib/systemd/systemd --user
+neeshant     383  0.0  0.0  22916  4124 ?        S    01:36   0:00 (sd-pam)
+neeshant     415  0.0  0.0   6136  5484 pts/1    Ss+  01:36   0:00 -bash
+polkitd      587  0.0  0.1 380176  8468 ?        Ssl  01:38   0:00 /usr/lib/polkit-1/polkitd --no-debug --log-level=notice
+neeshant    1515  0.0  0.0   8548  5068 ?        Ss   01:38   0:00 /usr/bin/dbus-daemon --session --address=systemd: --nofork --nopidfile --systemd-activation --syslog-only
+neeshant    2676  0.0  0.0  10504  3528 ?        Ss   01:41   0:00 ssh-agent -s
+root        5000  0.0  0.1  50256 12788 ?        S<s  02:56   0:00 /usr/lib/systemd/systemd-journald
+neeshant    5156  8.3  0.0   6268  3680 pts/0    S+   03:01   0:00 -bash
+neeshant    5161  100  0.0   7164  4308 pts/0    R+   03:01   0:00 ps aux
+Hello, neeshant ahire!
