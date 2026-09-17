@@ -1,3 +1,7 @@
-- https://github.com/Nency-Ravaliya/Kubernetes 
+# heading 
+the followinga are done in their respective folders 
 
-- k8s core objects: https://github.com/Nency-Ravaliya/Kubernetes/blob/main/core-objects.md 
+[Rolling Update](./01-rolling-update/)
+[blue-green](./02-blue-green/)
+[canary](./03-canary/)
+[recreate](./04-recreate/)
