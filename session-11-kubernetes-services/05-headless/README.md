@@ -252,3 +252,9 @@ kubectl delete -f 05-headless/client-pod.yaml
 kubectl delete -f 05-headless/app-statefulset.yaml
 kubectl delete -f 05-headless/service.yaml
 ```
+
+---
+
+## 11. Screenshots
+
+![headless](./screenshots/Screenshot%202026-09-18%20190658.png)

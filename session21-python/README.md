@@ -806,3 +806,99 @@ Troubleshooting
 ```
 
 That is the actual objective of Session 21.
+
+---
+
+# PART P — GITOPS
+
+## 25. GitOps workflow
+
+This project follows a GitOps-style flow even without a dedicated GitOps operator:
+
+```text
+Git commit (desired state)
+  ↓
+GitHub Actions (test → build → scan → push GHCR with SHA tag)
+  ↓
+Helm values updated to new SHA tag
+  ↓
+helm upgrade --install (reconciles cluster to desired state)
+```
+
+Git is the single source of truth:
+
+- application code + `helm/taskboard/values*.yaml` + `k8s/` + `terraform/` are all versioned
+- every deployment is traceable: `commit SHA → image tag → Helm release`
+- rollback = `helm rollback taskboard -n taskboard` or revert the values change and re-apply
+
+Extension to full GitOps (ArgoCD/Flux):
+
+```text
+Git push → ArgoCD detects drift → auto-syncs EKS cluster
+```
+
+To adopt ArgoCD, point an `Application` at `helm/taskboard/` and let it sync on each SHA-tag update instead of running `helm upgrade` from CI.
+
+---
+
+# PART Q — SCREENSHOTS (FINAL SUBMISSION EVIDENCE)
+
+Include these in your Final Project submission (see `GRADING.md` for point mapping):
+
+```text
+Application
+  [ ] browser at http://localhost:3000 with TaskBoard loaded
+  [ ] curl http://localhost:8000/health + /api/tasks output
+  [ ] Swagger at http://localhost:8000/docs
+
+Testing
+  [ ] pytest -v all passing
+
+Docker
+  [ ] docker compose up --build running (frontend + backend + postgres)
+
+Workflows (CI/CD)
+  [ ] green GitHub Actions run URL
+  [ ] GHCR package page with SHA-based tags
+
+Security
+  [ ] Trivy scan output (clean or with findings) + 2-3 sentence explanation
+
+Terraform
+  [ ] terraform plan output
+  [ ] AWS Console VPC + EKS screenshots
+  [ ] terraform destroy completion
+
+Kubernetes + Helm
+  [ ] kubectl get pods -n taskboard (all Running)
+  [ ] kubectl get svc -n taskboard
+  [ ] helm list -n taskboard
+  [ ] app accessed via Ingress hostname/LB IP
+
+Monitoring
+  [ ] curl <backend>/metrics output
+  [ ] Prometheus Targets page (UP)
+  [ ] Grafana dashboard with populated panel
+
+GitOps / Troubleshooting
+  [ ] commit → pipeline → updated deployment (helm revision)
+  [ ] broken image / broken Service diagnosis (describe/events/endpoints)
+```
+
+---
+
+# PART R — LESSONS LEARNED
+
+- Tests before images: `pytest` in CI stops broken code from becoming a promoted image.
+- Immutable tags: SHA tags give commit → image → deployment traceability; avoid `latest`.
+- Small images, non-root users, multi-stage frontend builds reduce attack surface.
+- Security is layered (SAST/dependency/secret/container scan); Trivy covers only the container layer.
+- Terraform manages AWS (VPC/EKS); Kubernetes manages workloads — do not mix the two.
+- Helm values per environment (`values-dev.yaml` vs production values) keep Ingress/resources sane.
+- Ingress is config only — a controller must implement it.
+- HPA needs resource requests + Metrics Server; normal health checks will not trigger scaling.
+- `/health` (liveness) vs `/ready` (readiness incl. DB check) vs `/metrics` (Prometheus) serve different consumers.
+- Always `terraform destroy` classroom EKS/NAT infrastructure to avoid AWS costs.
+- Never commit secrets; use `terraform.tfvars.example` + CI secrets instead.
+
+See `GRADING.md` for the 100-point rubric (M1–M10) and submission checklist.

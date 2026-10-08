@@ -11,11 +11,12 @@ A **Kubernetes Service** provides a stable virtual IP address (ClusterIP) and a 
 * Understand the fundamental Kubernetes flat networking model and the **3 Golden Rules of Pod Networking**.
 * Decouple Pod lifecycles from network communication using the **Service abstraction**.
 * Demystify port mappings: The definitive difference between **`port`**, **`targetPort`**, and **`nodePort`**.
-* Master the 4 Service Types:
+* Master the 5 Service Types:
   * **`ClusterIP`** (Default): Internal cluster-only communication.
   * **`NodePort`**: Exposes the service on a static high port (`30000–32767`) across every worker node.
   * **`LoadBalancer`**: Provisions an external cloud load balancer (e.g., AWS NLB/ALB) with a public IP.
   * **`ExternalName`**: Maps internal service names to external CNAMEs (e.g., AWS RDS endpoints).
+  * **`Headless`** (`clusterIP: None`): No VIP; CoreDNS returns Pod IPs directly for StatefulSets (Kafka, Mongo, Cassandra).
 * Understand cluster-internal DNS resolution via **CoreDNS**, `/etc/resolv.conf`, and Fully Qualified Domain Names (FQDNs).
 * Troubleshoot the #1 Kubernetes networking error: **Empty Endpoints (`<none>`)**.
 
@@ -111,7 +112,7 @@ External Internet / User Browser
 
 ---
 
-### 4. Fourth Question: What Are the 4 Kubernetes Service Types?
+### 4. Fourth Question: What Are the 5 Kubernetes Service Types?
 
 ```mermaid
 flowchart TD
@@ -448,3 +449,89 @@ kubectl delete -f troubleshooting/empty-endpoints.yaml
 ## Next Session Connection
 
 In **Session 12: Kubernetes Ingress, ConfigMaps & Secrets**, NodePort opens too many non-standard ports (`:30080`) and LoadBalancer gets expensive if you create one per microservice. You will learn how **Ingress Controllers** route traffic from a single public domain (`yatri.com/api` vs `yatri.com/app`) and manage configuration and passwords securely with ConfigMaps and Secrets.
+
+---
+
+## Appendix A: Screenshot Gallery (all 5 service types running)
+
+> Merged from `readme.md`. Per-type manifests, step-by-step commands, and troubleshooting live in [01-clusterip](./01-clusterip/), [02-nodeport](./02-nodeport/), [03-loadbalancer](./03-loadbalancer/), [04-externalname](./04-externalname/), [05-headless](./05-headless/).
+
+### ClusterIP
+
+![cluster-ip](./01-clusterip/screenshots/Screenshot%202026-09-17%20235056.png)
+
+![browser-view](./01-clusterip/screenshots/Screenshot%202026-09-17%20234801.png)
+
+### NodePort
+
+![nodeport](./02-nodeport/screenshots/Screenshot%202026-09-18%20183245.png)
+
+![browser](./02-nodeport/screenshots/browserview.png)
+
+### LoadBalancer
+
+![loadbalancer](./03-loadbalancer/screenshots/browser-view.png)
+
+![loadbalancer](./03-loadbalancer/screenshots/Screenshot%202026-09-18%20184504.png)
+
+### ExternalName
+
+![externalname](./04-externalname/screenshots/Screenshot%202026-09-18%20190036.png)
+
+### Headless
+
+![headless](./05-headless/screenshots/Screenshot%202026-09-18%20190658.png)
+
+---
+
+## Appendix B: Task 2 — Workload Controller Comparisons
+
+### Deployment vs ReplicaSet
+
+| Aspect | ReplicaSet | Deployment |
+| :--- | :--- | :--- |
+| Purpose | Keeps N identical Pod replicas running | Manages ReplicaSets + rolling updates/rollbacks |
+| Updates | No rolling update; manual pod-template swap | Declarative `kubectl rollout` with revision history |
+| Use it when | You need a bare replica holder (rare directly) | Any stateless app you will ever update (default) |
+
+Rule of thumb: **never create a ReplicaSet directly** — a Deployment creates and manages it for you.
+
+### Deployment vs DaemonSet / StatefulSet
+
+| Aspect | Deployment | DaemonSet | StatefulSet |
+| :--- | :--- | :--- | :--- |
+| Pod identity | Interchangeable | One Pod per (selected) node | Stable ordinal identity (`web-0`, `web-1`) + stable storage |
+| Scaling | `replicas: N` anywhere | Scales with node count | Ordered creation/deletion, sticky storage |
+| Use it when | Stateless apps/APIs | Per-node agents (log collectors, `kube-proxy`, CNI) | Databases/queues needing peers + persistence (Kafka, Mongo, Cassandra) — pair with a Headless Service |
+
+### ReplicaSet vs Service
+
+| Aspect | ReplicaSet | Service |
+| :--- | :--- | :--- |
+| Layer | Compute: **keeps Pods alive** | Network: **routes traffic to Pods** |
+| Mechanism | `selector` + `replicas` reconciliation | `selector` → Endpoints + ClusterIP/DNS + `kube-proxy` |
+| Failure mode | Pod count wrong | Endpoints `<none>` (selector typo) or wrong `targetPort` |
+
+They complement each other: the ReplicaSet guarantees the Pods exist; the Service guarantees clients can reach them without tracking Pod IPs.
+
+---
+
+## Appendix C: Task 3 — FQDN Quick Reference (inline)
+
+Full beginner-friendly guide: [fqdn.md](./fqdn.md). There is no `fqdn/` directory in this session — the deep dive lives in that file.
+
+- Format: `<service>.<namespace>.svc.cluster.local` (e.g. `yatri-backend-service.default.svc.cluster.local`).
+- Same namespace: short name works (`http://yatri-backend-service:80`) via `/etc/resolv.conf` search domains.
+- Cross-namespace: qualify with namespace (`http://backend.production`) or use the full FQDN.
+- StatefulSet peers via Headless Service: `<pod-name>.<service-name>.<namespace>.svc.cluster.local` (e.g. `kafka-0.kafka-headless.production.svc.cluster.local`).
+
+## Appendix D: Task 4 — CoreDNS Quick Reference (inline)
+
+There is no `coredns/` directory in this session — this inline summary plus [fqdn.md](./fqdn.md) (sections 3–5, 9) is the CoreDNS reference.
+
+- CoreDNS runs in `kube-system` (`kubectl get pods -n kube-system -l k8s-app=kube-dns`); its Service IP (typically `10.96.0.10`) is injected as `nameserver` in every Pod's `/etc/resolv.conf`.
+- Creating/updating/deleting a Service instantly adds/removes its DNS record — no manual DNS work.
+- Diagnose with: `kubectl exec -it curl-test-pod -- nslookup <svc>` and `cat /etc/resolv.conf` (check `search` + `ndots:5`).
+- Classic outage: CoreDNS CrashLoopBackOff from a DNS forwarding loop (host `resolv.conf` pointing at `127.0.0.53`); fix kubelet `--resolv-conf` or set an upstream (e.g. `8.8.8.8`) in the CoreDNS ConfigMap.
+
+Full 5-service comparison, YAML field guide, and decision tree: [service.md](./service.md).

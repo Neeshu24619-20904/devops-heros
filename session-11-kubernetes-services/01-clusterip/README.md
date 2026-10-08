@@ -247,3 +247,11 @@ kubectl delete -f 01-clusterip/client-pod.yaml
 kubectl delete -f 01-clusterip/service.yaml
 kubectl delete -f 01-clusterip/app-deployment.yaml
 ```
+
+---
+
+## 10. Screenshots
+
+![clusterip-get](./screenshots/Screenshot%202026-09-17%20234801.png)
+
+![clusterip-browser](./screenshots/Screenshot%202026-09-17%20235056.png)

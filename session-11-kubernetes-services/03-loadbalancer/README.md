@@ -203,3 +203,11 @@ minikube service web-service-loadbalancer
 kubectl delete -f 03-loadbalancer/service.yaml
 kubectl delete -f 03-loadbalancer/app-deployment.yaml
 ```
+
+---
+
+## 10. Screenshots
+
+![lb-cli](./screenshots/Screenshot%202026-09-18%20184504.png)
+
+![lb-browser](./screenshots/browser-view.png)

@@ -18,7 +18,7 @@
 
 ![3](./screenshots/v1.png)
 
-![4](./screenshots3.png)
+![4](./screenshots/3.png)
 
 ![5](./screenshots/v2.png)
 

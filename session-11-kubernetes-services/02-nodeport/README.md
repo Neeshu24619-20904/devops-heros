@@ -222,3 +222,11 @@ minikube service web-service-nodeport --url
 kubectl delete -f 02-nodeport/service.yaml
 kubectl delete -f 02-nodeport/app-deployment.yaml
 ```
+
+---
+
+## 10. Screenshots
+
+![nodeport-cli](./screenshots/Screenshot%202026-09-18%20183245.png)
+
+![nodeport-browser](./screenshots/browserview.png)

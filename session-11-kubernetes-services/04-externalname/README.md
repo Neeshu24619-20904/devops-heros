@@ -165,3 +165,9 @@ Expected Output (GitHub API JSON):
 kubectl delete -f 04-externalname/client-pod.yaml
 kubectl delete -f 04-externalname/service.yaml
 ```
+
+---
+
+## 9. Screenshots
+
+![externalname](./screenshots/Screenshot%202026-09-18%20190036.png)

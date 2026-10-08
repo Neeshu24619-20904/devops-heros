@@ -1,130 +1,57 @@
-# Session 14: Assignment:
+# Session 14 — Kubernetes Troubleshooting
 
-## Task 1:
+Core-command drills + broken→fixed issue labs + production-style mini-project.
 
-### Screenshots:
+## Assignment — [assignment/README.md](./assignment/README.md)
 
-kubectl get:
+Full evidence with screenshots: Task 1 commands, Task 2 issues, Task 3 mini-project.
+
+### Task 1 — Core commands
+
+`kubectl get`, `describe`, `logs`, `exec`, `events` (+ misc commands). Debug order: `get` → `describe` → `logs` → `exec` → `events`.
 
 ![kubectl get](./assignment/screenshots/task1/kubectl%20get.png)
 
-kubectl describe:
-
 ![kubectl describe](./assignment/screenshots/task1/kubectl%20describe.png)
-
-kubectl logs:
 
 ![kubectl logs](./assignment/screenshots/task1/kubectl%20logs.png)
 
-kubectl exec:
-
 ![kubectl exec](./assignment/screenshots/task1/kubectl%20exec.png)
 
-kubectl events:
+![kubectl events](./assignment/screenshots/task1/kubectl%20events%201.png)
 
-![kubectl events 1](./assignment/screenshots/task1/kubectl%20events%201.png)
+See [assignment/README.md](./assignment/README.md) for all Task 1 screenshots (events 1–3, misc commands).
 
-![kubectl events 2](./assignment/screenshots/task1/kubectl%20%20event%202.png)
+### Task 2 — Issues (CrashLoopBackOff, ImagePullBackOff, Pending, Service/DNS)
 
-![kubectl events 3](./assignment/screenshots/task1/kubectl%20%20events%203.png)
+- CrashLoopBackOff ([06-crashloopbackoff](./06-crashloopbackoff/)): `exit 1` loop → `logs --previous` → fix command. ![crashloop](./assignment/screenshots/task2/crashloop1.png)
+- ImagePullBackOff ([07-imagepullbackoff](./07-imagepullbackoff/)): bad tag → `describe` pull error → retag `:latest`. ![imagepull](./assignment/screenshots/task2/imagepullback1.png)
+- Pending ([08-pending-pods](./08-pending-pods/)): impossible requests → `0/1 nodes available` → lower requests. ![pending](./assignment/screenshots/task2/pendingpods.png)
+- Service/DNS ([09-service-dns-troubleshooting](./09-service-dns-troubleshooting/)): selector mismatch → empty Endpoints; `nslookup` from dns-test pod.
 
+See [assignment/README.md](./assignment/README.md) for the full broken→fixed command sequences and remaining screenshots.
 
+### Task 3 — Mini-project
 
-kubectl miscellaneous commands:
+Deploy → break → investigate → fix → verify Nginx app ([mini-project](./mini-project/)). Q&A (ImagePullBackOff caused by nonexistent tag; found via `kubectl get pods -o wide`; fixed by retagging to `latest`) plus 5 terminal screenshots in [assignment/README.md](./assignment/README.md).
 
-![kubectl remaining cmds](./assignment/screenshots/task1/misc%20comm.png)
+![mini-project](./assignment/screenshots/task3/miniproject1.png)
 
 ---
 
-## Task 2:
+## Topic guides
 
-### Screenshots:
-
-crash loop:
-
-![crash loop 1](./assignment/screenshots/task2/crashloop1.png)
-
-![crash loop 2](./assignment/screenshots/task2/crashloop2.png)
-
-
-image crash:
-
-![image crash 1](./assignment/screenshots/task2/imagepullback1.png)
-
-![image crash 2](./screennshots/image%20crash%20broken%202.png)
-
-![image crash 3](./screennshots/image%20crash%20fixed%201.png)
-
-![image crash 4](./screennshots/image%20crash%20fixed%202.png)
-
-pending crash:
-
-![pending crash 1](./screennshots/pending%20crash%20broken%201.png)
-
-![pending crash 2](./screennshots/pending%20crash%20broken%202.png)
-
-![pending crash 3](./screennshots/pending%20crash%20fixed%201.png)
-
-![pending crash 4](./screennshots/pending%20crash%20fixed%202.png)
-
-service crash:
-
-![service crash 1](./screennshots/service%20crash%20broken%201.png)
-
-![service crash 2](./screennshots/service%20crash%20broken%202.png)
-
-![service crash 3](./screennshots/service%20crash%20fixed.png)
-
-dns issue:
-
-![dns issue](./screennshots/dns%20issue.png)
-
-![dns issue](./screennshots/dns%20issue%202.png)
-
-
-## Task 3:
-
-****This was to run the mini project. The proof of running and practicing and fixing in terminal is given below****
-
-Answers to questions:
-
-Question 1: What is the Pod status?
-Answer: Getting error in ImagePullBackOff
-
-Question 2: What is the actual error?
-Answer: The image tag does not exist to pull
-
-Question 3: Which command helped you find the reason?
-Answer: kubectl get pods or kubectl get pods -o wide
-
-Question 4: What is wrong with the image?
-Answer: The tad does not exist. So the image cannot be pulled for an image that does not exist
-
-Question 5: How would you fix it?
-Answer: change the tag to latest
-
-### Screenshots:
-
-![mini project 1](./screennshots/14%20mini%20project%201.png)
-
-![mini project 2](./screennshots/14%20mini%20project%202.png)
-
-![mini project 3](./screennshots/14%20mini%20project%203.png)
-
-![mini project 4](./screennshots/14%20mini%20project%204.png)
-
-![mini project 5](./screennshots/14%20mini%20project%205.png)
-
-![mini project 6](./screennshots/14%20mini%20project%206.png)
-
-![mini project 7](./screennshots/14%20mini%20project%207.png)
-
-![mini project 8](./screennshots/14%20mini%20project%208.png)
-
-![mini project 9](./screennshots/14%20mini%20project%209.png)
-
-![mini project 10](./screennshots/14%20mini%20project%2010.png)
-
-![mini project 11](./screennshots/14%20mini%20project%2011.png)
-
-![mini project 12](./screennshots/14%20mini%20project%2012.png)
+| Guide | Covers |
+|---|---|
+| [01-kubectl-get](./01-kubectl-get/) | `get` drills |
+| [02-kubectl-describe](./02-kubectl-describe/) | `describe` drills |
+| [03-kubectl-logs](./03-kubectl-logs/) | `logs` / `--previous` |
+| [04-kubectl-exec](./04-kubectl-exec/) | `exec` + in-container `curl` |
+| [05-events](./05-events/) | cluster events |
+| [06-crashloopbackoff](./06-crashloopbackoff/) | `broken-pod.yaml` → `fixed-pod.yaml` |
+| [07-imagepullbackoff](./07-imagepullbackoff/) | bad tag → good tag |
+| [08-pending-pods](./08-pending-pods/) | unsatisfiable requests → fixed requests |
+| [09-service-dns-troubleshooting](./09-service-dns-troubleshooting/) | Service selectors, Endpoints, DNS |
+| [scenarios](./scenarios/) | `scenario-1-crashloop` … `scenario-5-oomkilled` + `triage_all.sh` |
+| [mini-project](./mini-project/) | Nginx deployment challenge |
+| [assignment](./assignment/) | graded evidence (Tasks 1–3 + screenshots) |
