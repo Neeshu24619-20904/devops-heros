@@ -1,344 +1,130 @@
-# Kubernetes Troubleshooting
+# Session 14: Assignment:
 
-The goal is to learn how to answer:
+## Task 1:
 
-> "My Kubernetes application is not working. How do I find out why?"
+### Screenshots:
 
----
+kubectl get:
 
-## Topics
+![kubectl get](./assignment/screenshots/task1/kubectl%20get.png)
 
-We will cover:
+kubectl describe:
 
-* `kubectl get`
-* `kubectl describe`
-* `kubectl logs`
-* `kubectl exec`
-* `Events`
-* `CrashLoopBackOff`
-* `ImagePullBackOff`
-* `Pending Pods`
-* `Service Troubleshooting`
-* `DNS Troubleshooting`
+![kubectl describe](./assignment/screenshots/task1/kubectl%20describe.png)
 
----
+kubectl logs:
 
-## Folder Structure
+![kubectl logs](./assignment/screenshots/task1/kubectl%20logs.png)
 
-```text
-01-kubectl-get
-02-kubectl-describe
-03-kubectl-logs
-04-kubectl-exec
-05-events
-06-crashloopbackoff
-07-imagepullbackoff
-08-pending-pod
-09-service-dns
-mini-project
-```
+kubectl exec:
 
-Each folder contains a small practical example.
+![kubectl exec](./assignment/screenshots/task1/kubectl%20exec.png)
+
+kubectl events:
+
+![kubectl events 1](./assignment/screenshots/task1/kubectl%20events%201.png)
+
+![kubectl events 2](./assignment/screenshots/task1/kubectl%20%20event%202.png)
+
+![kubectl events 3](./assignment/screenshots/task1/kubectl%20%20events%203.png)
+
+
+
+kubectl miscellaneous commands:
+
+![kubectl remaining cmds](./assignment/screenshots/task1/misc%20comm.png)
 
 ---
 
-## Troubleshooting Mindset
+## Task 2:
 
-When an application is not working, don't randomly run commands.
+### Screenshots:
 
-Follow a process:
+crash loop:
 
-```text
-1. Observe
-      │
-      ▼
-2. Identify the resource
-      │
-      ▼
-3. Check status
-      │
-      ▼
-4. Check details
-      │
-      ▼
-5. Check events
-      │
-      ▼
-6. Check logs
-      │
-      ▼
-7. Enter container if possible
-      │
-      ▼
-8. Test connectivity
-      │
-      ▼
-9. Find root cause
-      │
-      ▼
-10. Fix
-      │
-      ▼
-11. Verify
-```
+![crash loop 1](./assignment/screenshots/task2/crashloop1.png)
 
----
+![crash loop 2](./assignment/screenshots/task2/crashloop2.png)
 
-## The Five Commands
 
-### 1. `kubectl get`
+image crash:
 
-Use it for a quick view.
+![image crash 1](./assignment/screenshots/task2/imagepullback1.png)
 
-```bash
-kubectl get pods
-```
+![image crash 2](./screennshots/image%20crash%20broken%202.png)
 
-**Question:**
-> "What is happening?"
+![image crash 3](./screennshots/image%20crash%20fixed%201.png)
 
----
+![image crash 4](./screennshots/image%20crash%20fixed%202.png)
 
-### 2. `kubectl describe`
+pending crash:
 
-Use it for detailed information.
+![pending crash 1](./screennshots/pending%20crash%20broken%201.png)
 
-```bash
-kubectl describe pod <pod-name>
-```
+![pending crash 2](./screennshots/pending%20crash%20broken%202.png)
 
-**Question:**
-> "What details can explain the problem?"
+![pending crash 3](./screennshots/pending%20crash%20fixed%201.png)
 
----
+![pending crash 4](./screennshots/pending%20crash%20fixed%202.png)
 
-### 3. `kubectl logs`
+service crash:
 
-Use it to see application output.
+![service crash 1](./screennshots/service%20crash%20broken%201.png)
 
-```bash
-kubectl logs <pod-name>
-```
+![service crash 2](./screennshots/service%20crash%20broken%202.png)
 
-**Question:**
-> "What is the application saying?"
+![service crash 3](./screennshots/service%20crash%20fixed.png)
 
----
+dns issue:
 
-### 4. `kubectl exec`
+![dns issue](./screennshots/dns%20issue.png)
 
-Use it to run commands inside a running container.
-
-```bash
-kubectl exec -it <pod-name> -- sh
-```
+![dns issue](./screennshots/dns%20issue%202.png)
 
-**Question:**
-> "What can I see from inside the container?"
-
----
 
-### 5. `Events`
+## Task 3:
 
-Use Events to understand what Kubernetes tried to do.
+****This was to run the mini project. The proof of running and practicing and fixing in terminal is given below****
 
-```bash
-kubectl get events
-```
-
-or:
-
-```bash
-kubectl describe pod <pod-name>
-```
-
-**Question:**
-> "What did Kubernetes try, and what happened?"
-
----
-
-## Common Kubernetes Problems
-
-### CrashLoopBackOff
-
-```text
-Container starts
-      │
-      ▼
-Application crashes
-      │
-      ▼
-Container restarts
-      │
-      ▼
-Crash again
-      │
-      ▼
-CrashLoopBackOff
-```
-
-**Check:**
+Answers to questions:
 
-```bash
-kubectl logs <pod-name>
-kubectl logs <pod-name> --previous
-kubectl describe pod <pod-name>
-```
+Question 1: What is the Pod status?
+Answer: Getting error in ImagePullBackOff
 
----
+Question 2: What is the actual error?
+Answer: The image tag does not exist to pull
 
-### ImagePullBackOff
+Question 3: Which command helped you find the reason?
+Answer: kubectl get pods or kubectl get pods -o wide
 
-```text
-Kubernetes
-    │
-    ▼
-Needs image
-    │
-    ▼
-Pull fails
-    │
-    ▼
-Retries
-    │
-    ▼
-ImagePullBackOff
-```
-
-**Check:**
-
-```bash
-kubectl describe pod <pod-name>
-```
-
-Look at Events.
-
----
-
-### Pending Pod
-
-```text
-Pod created
-    │
-    ▼
-Scheduler tries to find a node
-    │
-    ▼
-Cannot schedule
-    │
-    ▼
-Pending
-```
-
-**Check:**
-
-```bash
-kubectl describe pod <pod-name>
-```
-
-Look at Events.
-
----
-
-### Service Problem
-
-**Check:**
-
-```bash
-kubectl get pods
-kubectl get service
-kubectl describe service <service-name>
-kubectl get endpoints <service-name>
-```
-
-Most importantly:
-
-```text
-Pod labels
-    │
-    ▼
-Service selector
-    │
-    ▼
-Endpoints
-```
-
-They need to match correctly.
-
----
-
-### DNS Problem
-
-Test from inside a Pod:
-
-```bash
-nslookup <service-name>
-```
-
-Check CoreDNS:
-
-```bash
-kubectl get pods -n kube-system
-```
-
-Check CoreDNS logs:
-
-```bash
-kubectl logs -n kube-system -l k8s-app=kube-dns
-```
-
----
-
-## Golden Troubleshooting Flow
-
-Students should remember this:
-
-```text
-              PROBLEM
-                 │
-                 ▼
-            kubectl get
-                 │
-                 ▼
-           What is the status?
-                 │
-                 ▼
-         kubectl describe
-                 │
-                 ▼
-              Events
-                 │
-                 ▼
-           kubectl logs
-                 │
-                 ▼
-           kubectl exec
-                 │
-                 ▼
-           Test connectivity
-                 │
-                 ▼
-            Find root cause
-                 │
-                 ▼
-                FIX
-                 │
-                 ▼
-              VERIFY
-```
-
----
-
-## Learning
-
-* Check Kubernetes resource status
-* Inspect detailed resource information
-* Read application logs
-* Execute commands inside containers
-* Understand Kubernetes Events
-* Troubleshoot `CrashLoopBackOff`
-* Troubleshoot `ImagePullBackOff`
-* Troubleshoot `Pending` Pods
-* Troubleshoot Services
-* Test Kubernetes DNS
-* Identify root causes instead of guessing
+Question 4: What is wrong with the image?
+Answer: The tad does not exist. So the image cannot be pulled for an image that does not exist
+
+Question 5: How would you fix it?
+Answer: change the tag to latest
+
+### Screenshots:
+
+![mini project 1](./screennshots/14%20mini%20project%201.png)
+
+![mini project 2](./screennshots/14%20mini%20project%202.png)
+
+![mini project 3](./screennshots/14%20mini%20project%203.png)
+
+![mini project 4](./screennshots/14%20mini%20project%204.png)
+
+![mini project 5](./screennshots/14%20mini%20project%205.png)
+
+![mini project 6](./screennshots/14%20mini%20project%206.png)
+
+![mini project 7](./screennshots/14%20mini%20project%207.png)
+
+![mini project 8](./screennshots/14%20mini%20project%208.png)
+
+![mini project 9](./screennshots/14%20mini%20project%209.png)
+
+![mini project 10](./screennshots/14%20mini%20project%2010.png)
+
+![mini project 11](./screennshots/14%20mini%20project%2011.png)
+
+![mini project 12](./screennshots/14%20mini%20project%2012.png)
