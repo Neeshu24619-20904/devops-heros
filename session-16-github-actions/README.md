@@ -1,68 +1,41 @@
-# Session 16: CI/CD & GitHub Actions
+# Session 16 Assignment Submission:
 
-Automates build, test, and delivery on every `git push` so broken code is caught before it ships.
+## What was done:
 
-## CI vs CD
+We were asked to build and application and use github action to build a ci/cd pipeline for this and show the demo
 
-| CI (Continuous Integration) | CD (Continuous Delivery / Deployment) |
-|---|---|
-| Build + test on every push/PR | Deliver / deploy after tests pass |
-| Find bugs early | Make the app available |
-| `pytest`, lint, validate | Release, push image, deploy to K8s |
+***For the files and folders please visit the github repo mentioned later in this readme***
 
-This session implements CI + build artifact; deployment targets (Docker/K8s/cloud) come later.
+## What is in the yml file:
 
-## Topics Covered
+We have done the following in the yml file:
+- It runs on ubuntu latest
+- Has 2 jobs:
+  - test
+  - build
+- Test has 5 steps:
+  - Checkout the source code
+  - Setup Python
+  - Display the Python Version
+  - Install required dependencies listed in requirements.txt
+  - Run pytest
+- Build has 5 steps too:
+  - Checkout the source code
+  - Setup Python
+  - Build application
+  - Show build output
+  - Upload build artifact
+- What artifact does is that it uploads a zip file downloadble that user can download that is already setup and build using the steps mentioned before
 
-- CI vs CD, pipeline concepts (stages, jobs, steps)
-- GitHub Actions intro, workflows (`.github/workflows/*.yml`, `on: push / pull_request / workflow_dispatch`)
-- Jobs / steps / runners (`runs-on: ubuntu-latest`, parallel by default, `needs:` for ordering)
-- Secrets (`${{ secrets.NAME }}`, never echo values, Settings → Secrets and variables → Actions)
-- Artifacts (`actions/upload-artifact`, `calculator-build` with `build/` output)
-- Build + test pipeline (checkout → setup Python → install → `pytest` → `./build.sh` → upload)
+* Screenshots of workflow in github is shown below.
 
-Sub-folders use timestamped names (`01-ci-vs-cd 10-33-34-211/`, …) plus a cleaned copy at `session-16-github-actions/` (`01-ci-vs-cd/`, `02-cicd-pipeline/`, …, `10-final-cicd-pipeline/`).
+**To redirect to the repo of the cicd pipline, [click here.](https://github.com/adx19/github-actions-pipeline-practice)**
 
-## Workflow / Jobs / Steps / Runners / Secrets / Artifacts / Build / Test
+## Screenshots:
 
-```yaml
-name: Python CI Pipeline
-on:
-  push: { branches: [main] }
-  pull_request: { branches: [main] }
-  workflow_dispatch:
-jobs:
-  build-and-test:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v6
-      - uses: actions/setup-python@v7
-        with: { python-version: "3.12" }
-      - run: pip install -r requirements.txt
-      - run: pytest -v
-      - run: ./build.sh
-      - uses: actions/upload-artifact@v4
-        with: { name: calculator-build, path: build/ }
-```
+![test 1](./session-16-github-actions/10-final-cicd-pipeline/screenshots/cicd1.png)
 
-- **Workflow:** whole YAML automation definition.
-- **Jobs:** groups of steps on one runner; parallel by default; `needs: test` makes build wait.
-- **Steps:** each `uses:` (prebuilt action) or `run:` (shell command).
-- **Runners:** GitHub-hosted ephemeral VMs (`ubuntu-latest`).
-- **Secrets:** e.g. `DEMO_SECRET`; check presence without printing: `[ -n "$DEMO_SECRET" ]`.
-- **Artifacts:** build output (`build/calculator.py`, `build/build-info.txt`) downloadable from the run Summary.
-- **Build / test:** `pytest -v` gates the build; breaking `add()` → red pipeline → fix → green pipeline.
+![test 2](./session-16-github-actions/10-final-cicd-pipeline/screenshots/cicd2.png)
 
-## Demos
 
-- Hands-on calculator app: `session-16-github-actions/demo/README.md`
-- Final 3-job pipeline (test + security-check + build): `session-16-github-actions/10-final-cicd-pipeline/README.md`
 
-## Pipeline Screenshots
-
-No checked-in screenshots for this session. To capture them: push to `main`, open repo → **Actions** → select the run, screenshot the jobs/steps log and the **Artifacts** (`calculator-build`) section on the run Summary page.
-
-## Reference
-
-- https://docs.github.com/en/actions
-- Workflow syntax: https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions
